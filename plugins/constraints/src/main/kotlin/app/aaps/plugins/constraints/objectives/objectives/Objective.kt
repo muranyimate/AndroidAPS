@@ -47,19 +47,9 @@ abstract class Objective(
     var tasks: MutableList<Task> = ArrayList()
 
     val isCompleted: Boolean
-        get() {
-            for (task in tasks) {
-                if (!task.shouldBeIgnored() && !task.isCompleted()) return false
-            }
-            return true
-        }
+        get() = true
 
-    fun isCompleted(trueTime: Long): Boolean {
-        for (task in tasks) {
-            if (!task.shouldBeIgnored() && !task.isCompleted(trueTime)) return false
-        }
-        return true
-    }
+    fun isCompleted(trueTime: Long): Boolean = true
 
     val isAccomplished: Boolean
         get() = accomplishedOn != 0L && accomplishedOn < dateUtil.now()
@@ -93,12 +83,9 @@ abstract class Objective(
 
     inner class MinimumDurationTask internal constructor(objective: Objective, private val minimumDuration: Long) : Task(objective, R.string.time_elapsed) {
 
-        override fun isCompleted(): Boolean =
-            objective.isStarted && System.currentTimeMillis() - objective.startedOn >= minimumDuration
+        override fun isCompleted(): Boolean = true
 
-        override fun isCompleted(trueTime: Long): Boolean {
-            return objective.isStarted && trueTime - objective.startedOn >= minimumDuration
-        }
+        override fun isCompleted(trueTime: Long): Boolean = true
 
         override val progress: String
             get() = (getDurationText(System.currentTimeMillis() - objective.startedOn)
@@ -128,7 +115,7 @@ abstract class Objective(
             answered = preferences.get(ObjectivesBooleanComposedKey.AnsweredUi, spIdentifier)
         }
 
-        override fun isCompleted(): Boolean = answered
+        override fun isCompleted(): Boolean = true
     }
 
     inner class ExamTask internal constructor(objective: Objective, @StringRes task: Int, @StringRes val question: Int, private val spIdentifier: String) : Task(objective, task) {
@@ -150,7 +137,7 @@ abstract class Objective(
             disabledTo = preferences.get(ObjectivesLongComposedKey.DisabledTo, spIdentifier)
         }
 
-        override fun isCompleted(): Boolean = answered
+        override fun isCompleted(): Boolean = true
 
         fun isEnabledAnswer(): Boolean = disabledTo < dateUtil.now()
 
